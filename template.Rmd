@@ -13,20 +13,21 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r Andrew}
 
 ```
-
+is annoying
 
 ## Section Two
 
 ```{r Lucas}
 
 ```
-
+is weak
 ## Section Three
 
 ```{r Noah}
-
+v1 <- c(6,9,1)
+v1
 ```
-
+is dope
 
 
 ## Section Four
@@ -34,3 +35,4 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r Dillon}
 
 ```
+Vikings suck
