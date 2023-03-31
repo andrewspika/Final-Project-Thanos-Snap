@@ -18,7 +18,7 @@ is great
 ## Section Two
 
 ```{r Lucas}
-
+ayo  = c(69, 69)
 ```
 is weak
 ## Section Three
