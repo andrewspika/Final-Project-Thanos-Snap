@@ -14,7 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```
 is annoying
-
+is great
+is awesome
 ## Section Two
 
 ```{r Lucas}
