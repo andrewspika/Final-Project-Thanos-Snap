@@ -10,20 +10,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Section One
 
-```{r student1}
+```{r Andrew}
 
 ```
 
 
 ## Section Two
 
-```{r student2}
+```{r Lucas}
 
 ```
 
 ## Section Three
 
-```{r student3}
+```{r Noah}
 
 ```
 
@@ -31,6 +31,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Section Four
 
-```{r student4}
+```{r Dillon}
 
 ```
