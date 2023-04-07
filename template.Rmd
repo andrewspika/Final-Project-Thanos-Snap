@@ -9,10 +9,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
+1. Two of us handle the R side of things to develop and create simulations. Two of us learn how to make shiny apps
 
-1. Two of us find data that is useable to create simulations. Two of us learn how to make shiny apps
-
-2. Investigate different aspects of our data such as population size, allele frequency, generations, events, etc. and how they impact genetic drift.
+2. Investigate different add-ons to our simulation such as population size, allele frequency, generations, events, etc. and how they impact genetic drift.
 
 3. Continue to learn shiny. Start to create test shiny apps.
 
