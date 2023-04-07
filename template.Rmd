@@ -8,6 +8,18 @@ date: "2023-03-31"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
+1. Two of us find data that is useable to create simulations. Two of us learn how to make shiny apps
+
+2. Investigate different aspects of our data such as population size, allele frequency, generations, events, etc. and how they impact genetic drift.
+
+3. Continue to learn shiny. Start to create test shiny apps.
+
+4. Create simulations in R for genetic drift after a bottleneck event. Then translate that simulation into something user-friendly.
+
+5. Finished product: Shiny app that simulates genetic drift after a bottleneck event.
+
+
 ```{r}
 ## Import libraries
 source("https://github.com/mennodejong1986/SambaR/raw/master/SAMBAR_v1.09.txt")
