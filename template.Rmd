@@ -23,9 +23,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 ## Import libraries
+
 source("https://github.com/mennodejong1986/SambaR/raw/master/SAMBAR_v1.09.txt")
 library(tidyverse)
 library(dplyr)
+
 
 library(shiny)
 library(ggplot2)
@@ -69,12 +71,6 @@ parents <- population[sample(n, 2),]
 
 ```
 
-<<<<<<< HEAD
-
-is annoying
-is great
-=======
->>>>>>> 255dd6e70cd56258935bc282d7c993adb134cb60
 ## Section Two
 
 ```{r Lucas}
