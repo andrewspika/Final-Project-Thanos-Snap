@@ -41,7 +41,7 @@ library(ggplot2)
 ## One Generation of Survivors
 
 # Total population for simulation
-population <- tibble(Trait = NA, Allele = NA, .rows = 100)
+population <- tibble(Trait = NA, Allele = NA, .rows = population/size)
 
 # Setting the number of rows, the population size, to be accessible by the variable 'n'
 n <- nrow(population)
@@ -65,11 +65,23 @@ population[survivors1,]
 
 ## Adding Generations
 
-# Picking two parents for new individual in data
-parents <- population[sample(n, 2),]
+population %>% group_by(Allele) %>% summarize(proportion = length(Allele)/n)
+
 
 
 ```
+
+```{r}
+# Function to produce offspring
+# Variables: pop (data frame to add offspring to), parents (two)
+#offspring <- function(pop) {
+#  par <- pop[sample(n, 2),]
+#  if(par[1]$Allele == "AA" & par[2]$Allele == "AA") {
+#    rbind()
+#  }
+#}
+```
+
 
 ## Section Two
 
