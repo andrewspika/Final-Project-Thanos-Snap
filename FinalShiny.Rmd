@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(shiny)
 library(ggplot2)
 
+# Shiny template from https://github.com/santiagosnchez/genetic_drift
 fluidPage(titlePanel("Genetic Drift Simulator"), 
           sidebarLayout(sidebarPanel(numericInput(inputId = "population_size", 
                                                   label = "Population Size", 
