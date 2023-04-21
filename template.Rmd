@@ -26,6 +26,9 @@ knitr::opts_chunk$set(echo = TRUE)
 source("https://github.com/mennodejong1986/SambaR/raw/master/SAMBAR_v1.09.txt")
 library(tidyverse)
 library(dplyr)
+
+library(shiny)
+library(ggplot2)
 ```
 
 
@@ -66,27 +69,26 @@ parents <- population[sample(n, 2),]
 
 ```
 
+<<<<<<< HEAD
 
 is annoying
 is great
+=======
+>>>>>>> 255dd6e70cd56258935bc282d7c993adb134cb60
 ## Section Two
 
 ```{r Lucas}
-ayo  = c(69, 69)
+
 ```
-is weak
+
 ## Section Three
 
 ```{r Noah}
-v1 <- c(6,9,1)
-v1
+
 ```
-is dope
-is a girl
 
 ## Section Four
 
 ```{r Dillon}
 
 ```
-Vikings suck
