@@ -23,7 +23,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 ## Import libraries
-source("https://github.com/mennodejong1986/SambaR/raw/master/SAMBAR_v1.09.txt")
+library(shiny)
+library(ggplot2)
 ```
 
 
@@ -33,26 +34,21 @@ source("https://github.com/mennodejong1986/SambaR/raw/master/SAMBAR_v1.09.txt")
 ```{r Andrew}
 # Comment in code chunk
 ```
-is annoying
-is great
+
 ## Section Two
 
 ```{r Lucas}
-ayo  = c(69, 69)
+
 ```
-is weak
+
 ## Section Three
 
 ```{r Noah}
-v1 <- c(6,9,1)
-v1
+
 ```
-is dope
-is a girl
 
 ## Section Four
 
 ```{r Dillon}
 
 ```
-Vikings suck
