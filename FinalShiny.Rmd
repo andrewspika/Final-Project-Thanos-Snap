@@ -12,7 +12,31 @@ knitr::opts_chunk$set(echo = TRUE)
 # Framework
 
 ```{r}
+library(shiny)
+library(ggplot2)
 
+fluidPage(
+    titlePanel(""),
+    sidebarLayout(
+        sidebarPanel(
+            numericInput(inputId = "",
+            label = "",
+            value = ,
+            step = ),
+            sliderInput( ,
+            label = "",
+            min = ,
+            max = ,
+            step = ,
+            value = ),
+            actionButton( ,
+            label = ""),
+            actionButton( ,
+            label = "")
+        ),
+        mainPanel( ),
+        )
+)
 ```
 
 
