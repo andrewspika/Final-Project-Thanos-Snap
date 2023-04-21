@@ -15,28 +15,26 @@ knitr::opts_chunk$set(echo = TRUE)
 library(shiny)
 library(ggplot2)
 
-fluidPage(
-    titlePanel(""),
-    sidebarLayout(
-        sidebarPanel(
-            numericInput(inputId = "",
-            label = "",
-            value = ,
-            step = ),
-            sliderInput( ,
-            label = "",
-            min = ,
-            max = ,
-            step = ,
-            value = ),
-            actionButton( ,
-            label = ""),
-            actionButton( ,
-            label = "")
-        ),
-        mainPanel( ),
-        )
-)
+# Shiny template from https://github.com/santiagosnchez/genetic_drift
+fluidPage(titlePanel("Genetic Drift Simulator"), 
+          sidebarLayout(sidebarPanel(numericInput(inputId = "population_size", 
+                                                  label = "Population Size", 
+                                                  value = 0, 
+                                                  step = 20), 
+                                     sliderInput(inputId = "initial_frequency", 
+                                                  label = "Initial Allele Frequency", 
+                                                  min = 0, 
+                                                  max = 1, 
+                                                  step = 0.05, 
+                                                  value = ), 
+                                     actionButton(inputId = "run", 
+                                                   label = "Run"), 
+                                     actionButton(inputId = "reset",
+                                                   label = "Reset")), 
+                        mainPanel(fluidRow(column(4, verbatimTextOutput("text"))),
+                                  fluidRow(column(8, plotOutput("pop_plot"))), 
+                                  fluidRow(column(8, plotOutput("freq_plot"))))))
+
 ```
 
 
