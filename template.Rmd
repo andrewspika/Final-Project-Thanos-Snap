@@ -24,6 +24,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 ## Import libraries
 source("https://github.com/mennodejong1986/SambaR/raw/master/SAMBAR_v1.09.txt")
+library(tidyverse)
+library(dplyr)
 ```
 
 
@@ -31,8 +33,40 @@ source("https://github.com/mennodejong1986/SambaR/raw/master/SAMBAR_v1.09.txt")
 ## Section One
 
 ```{r Andrew}
-# Comment in code chunk
+## One Generation of Survivors
+
+# Total population for simulation
+population <- tibble(Trait = NA, Allele = NA, .rows = 100)
+
+# Setting the number of rows, the population size, to be accessible by the variable 'n'
+n <- nrow(population)
+
+population$Allele <- sample(c("AA", "Aa", "aa"), size=n, replace=TRUE, prob=c(0.25, 0.5, 0.25))
+
+# Matching Alleles to Traits
+for(index in 1:n) {
+ if(population$Allele[index] == "AA" | population$Allele[index] == "Aa") {
+   population$Trait[index] <- "Dominant"
+ } else {
+   population$Trait[index] <- "Recessive"
+ }
+}
+
+# Random index for survival selection
+survivors1 <- sample(1:n, size = n/2)
+
+# Keeping only the survivors
+population[survivors1,]
+
+## Adding Generations
+
+# Picking two parents for new individual in data
+parents <- population[sample(n, 2),]
+
+
 ```
+
+
 is annoying
 is great
 ## Section Two
