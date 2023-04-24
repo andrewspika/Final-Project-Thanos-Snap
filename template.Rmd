@@ -23,8 +23,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 ## Import libraries
+
+source("https://github.com/mennodejong1986/SambaR/raw/master/SAMBAR_v1.09.txt")
 library(tidyverse)
 library(dplyr)
+
+
 library(shiny)
 library(ggplot2)
 ```
@@ -35,15 +39,22 @@ library(ggplot2)
 
 ```{r Andrew}
 ## One Generation of Survivors
+
 # Total population for simulation
 pop <- tibble(Trait = NA, Allele = NA, .rows = 100) #set .rows to 'population_size'
+
 pop$Allele <- sample(c("AA", "Aa", "aa"), size=nrow(pop), replace=TRUE, prob=c(0.25, 0.5, 0.25))
+
 # Random index for survival selection
 survivors1 <- sample(1:nrow(pop), size = nrow(pop)/2)
+
 # Keeping only the survivors
 pop <- pop[survivors1,]
+
 ## Adding Generations
+
 prop <- pop %>% group_by(Allele) %>% summarize(proportion = length(Allele)/nrow(pop))
+
 ```
 
 ```{r generation}
@@ -63,18 +74,25 @@ create.generation <-
    }
   return(gen)
   }
+
 # Test Function 'create.generation'
 generation <- create.generation()
+
 # Testing function still
 initial.pop <- create.generation()
+
 # Getting info from population
 pop.info <- get.proportions(initial.pop)
+
 # Creating another generation 'gen2' using population info
 nextGen <- create.generation(size = nrow(initial.pop), alleles=pop.info$Allele, allele.prop = pop.info$prop)
+
 # Possible binding of initial population with second generation
 initial.pop <- initial.pop %>% rbind(nextGen)
+
 ## Replacing initial population with next generation
 # initial.pop <- nextGen
+
 ```
 
 
