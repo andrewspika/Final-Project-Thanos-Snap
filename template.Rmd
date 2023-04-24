@@ -41,7 +41,7 @@ library(ggplot2)
 ## One Generation of Survivors
 
 # Total population for simulation
-population <- tibble(Trait = NA, Allele = NA, .rows = population/size)
+population <- tibble(Trait = NA, Allele = NA, .rows = input$population_size)
 
 # Setting the number of rows, the population size, to be accessible by the variable 'n'
 n <- nrow(population)
