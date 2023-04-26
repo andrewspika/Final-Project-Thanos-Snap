@@ -23,12 +23,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 ## Import libraries
-
-source("https://github.com/mennodejong1986/SambaR/raw/master/SAMBAR_v1.09.txt")
 library(tidyverse)
 library(dplyr)
-
-
 library(shiny)
 library(ggplot2)
 ```
