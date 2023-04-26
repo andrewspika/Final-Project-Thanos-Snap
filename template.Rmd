@@ -106,6 +106,15 @@ get.proportions <- function(pop) {
 }
 ```
 
+```{r}
+## Sample simulation -- NOT DONE!!
+# Function to simulate the generations
+# Inputs: number of generations 'gens', default is 10, the starting allele frequency 'start.freq' ordered respective to 'AA', 'Aa', 'aa'. Also population size 'pop.size'
+# Outputs: the resulting final generation of the simulation in a tibble
+simulate.generations <- function(gens=10, start.freq=c(.25, .5, .25), pop.size=100) {
+  population <- NULL
+}
+```
 
 ## Section Two
 
