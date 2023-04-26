@@ -21,7 +21,7 @@ knitr::opts_chunk$set(echo = TRUE)
 5. Finished product: Shiny app that simulates genetic drift after a bottleneck event.
 
 
-```{r}
+```{r, warning=FALSE}
 ## Import libraries
 library(tidyverse)
 library(dplyr)
@@ -39,7 +39,7 @@ library(ggplot2)
 # Total population for simulation
 pop <- tibble(Trait = NA, Allele = NA, .rows = 100) #set .rows to 'population_size'
 
-pop$Allele <- sample(c("AA", "Aa", "aa"), size=nrow(pop), replace=TRUE, prob=c(0.25, 0.5, 0.25))
+pop$Allele <- sample(c("AA", "Aa", "aa"), size=nrow(pop), replace=TRUE, prob=c(0.25, 0.5, 0.25)) #Eventually prob will be set by initial_frequency
 
 # Random index for survival selection
 survivors1 <- sample(1:nrow(pop), size = nrow(pop)/2)
@@ -127,5 +127,17 @@ simulate.generations <- function(gens=10, start.freq=c(.25, .5, .25), pop.size=1
 ## Section Four
 
 ```{r Dillon}
+# Currently working on shiny stuff.
 
+# Attempt at a bottleneck function
+
+run.bottleneck = function(prop.lost=0.50){ # Eventually will be controlled by a slider/text input
+    # Random index for survival selection
+    survivors <- sample(1:nrow(pop), size = nrow(pop) * (1-prop.lost))
+    
+    # Keeping only the survivors
+    pop <- pop[survivors,]
+    
+    # Somehow continue simulation (maybe a resume button?)
+}
 ```

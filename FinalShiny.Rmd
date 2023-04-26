@@ -17,7 +17,7 @@ library(ggplot2)
 
 # Define UI ----
 
-# Shiny template from https://github.com/santiagosnchez/genetic_drift
+# Shiny ideas from https://github.com/santiagosnchez/genetic_drift
 ui <- fluidPage(
     titlePanel("Genetic Drift Simulator"),
     sidebarLayout(
@@ -39,23 +39,18 @@ ui <- fluidPage(
                 label = "Run"), 
             actionButton(
                 inputId = "reset", 
-                label = "Reset")), 
+                label = "Reset"), 
             actionButton(
                 inputId = "bottleneck", 
-                label = "Bottleneck!"), 
+                label = "Bottleneck!")
+            ),
         mainPanel(
             fluidRow(
                 column(
                     4, 
-                    verbatimTextOutput("text")
+                    verbatimTextOutput("Plots")
                     )
                 ),
-            fluidRow(
-                column(
-                    8, 
-                    plotOutput("pop_plot")
-                    )
-                ), 
             fluidRow(
                 column(
                     8, 
@@ -77,7 +72,17 @@ server <- function(input, output) {
         input$initial_frequency
     })
     
+    observeEvent(input$run, {
+        # Start simulation
+    })
     
+    observeEvent(input$reset, {
+        # Stop simulation and clear progress
+    })
+    
+    observeEvent(input$bottleneck, {
+        # Use bottleneck function we create.
+    })
 }
 
 # Run the app ----
