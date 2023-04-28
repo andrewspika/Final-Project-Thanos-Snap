@@ -83,7 +83,7 @@ ui <- fluidPage(
             fluidRow(
                 column(
                     8, 
-                    plotOutput("freq_plot")
+                    plotOutput(test_plot)
                 )
             )
         )
