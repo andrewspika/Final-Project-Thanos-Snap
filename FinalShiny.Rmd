@@ -26,40 +26,61 @@ ui <- fluidPage(
                 inputId = "population_size", 
                 label = "Population Size", 
                 value = 100, 
-                step = 1), 
+                step = 1, 
+                min = 2,
+                max = 500
+            ), 
             sliderInput(
                 inputId = "initial_frequency", 
                 label = "Initial Allele Frequency", 
                 min = 0, 
                 max = 1, 
                 step = 0.05, 
-                value = 0.50), 
+                value = 0.50
+            ), 
+            selectInput(
+                inputId = "bottleneck_type",
+                label = "Bottleneck Type",
+                choices = c("Founder", "Dominant Pathogen", "Recessive Pathogen", "Natural Disaster", "Thanos Snap"),
+                selected = "Thanos Snap"
+            ),
+            numericInput(
+                inputId = "survival_rate",
+                label = "Survival Rate",
+                value = 0.50,
+                step = 0.05, 
+                min = 0.05,
+                max = 0.95
+            ),
             actionButton(
                 inputId = "run", 
-                label = "Run"), 
+                label = "Run"
+            ), 
             actionButton(
                 inputId = "reset", 
-                label = "Reset"), 
+                label = "Reset"
+            ), 
             actionButton(
                 inputId = "bottleneck", 
-                label = "Bottleneck!")
-            ),
+                label = "Bottleneck!"
+            )
+        ),
         mainPanel(
             fluidRow(
                 column(
                     4, 
                     verbatimTextOutput("Plots")
-                    )
-                ),
+                )
+            ),
             fluidRow(
                 column(
                     8, 
                     plotOutput("freq_plot")
-                    )
                 )
             )
         )
     )
+)
 
 
 # Define server logic ----
@@ -74,6 +95,7 @@ server <- function(input, output) {
     
     observeEvent(input$run, {
         # Start simulation
+        create.generation()
     })
     
     observeEvent(input$reset, {
