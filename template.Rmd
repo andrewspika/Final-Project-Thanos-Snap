@@ -145,7 +145,7 @@ simulate.generations <- function(gens=10, start.freq=c(.25, .5, .25), pop.size=1
 }
 ```
 
-```{r}
+```{r testing}
 ## Testing Simulation
 
 # Simulation using Founder Effect
@@ -160,6 +160,15 @@ rec.path.sim <- simulate.generations(bottle = "Recessive Characteristic Pathogen
 
 ```
 
+```{r summarizing}
+
+Founder.sim %>% group_by(Gen, Allele) %>% summarize(props = length(Allele)/nrow(Founder.sim)*10) %>% ggplot(aes(Gen, props)) + geom_col(aes(fill = Allele), position = "dodge")
+
+dom.path.sim %>% group_by(Gen, Allele) %>% summarize(props = length(Allele)/nrow(dom.path.sim)*10) %>% ggplot(aes(Gen, props)) + geom_col(aes(fill = Allele), position = "dodge")
+
+rec.path.sim %>% group_by(Gen, Allele) %>% summarize(props = length(Allele)/nrow(rec.path.sim)*10) %>% ggplot(aes(Gen, props)) + geom_col(aes(fill = Allele), position = "dodge")
+
+```
 
 ## Section Two
 
