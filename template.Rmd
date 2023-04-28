@@ -95,20 +95,26 @@ initial.pop <- initial.pop %>% rbind(nextGen)
 
 ```{r bottleneck}
 # Function to induce bottleneck event and alter population
-# Inputs: tibble with population to affect 'popu', and type of bottleneck event 'event'
+# Inputs: tibble with population to affect 'popu', and type of bottleneck event 'event', survival rate input 'survival.rate' changes survival rate of pathogen for each characteristic and how drastic natural distasters are
 # Outputs: the tibble with the resulting population (the survivors of the population)
-bottleneck <- function(popu, event) {
-  if(event == "Founder") {
+bottleneck <- function(popu, event, survival.rate) {
+  if(event == "Founder" ) {
+    survival.rate <- NA
     deaths <- sample(1:nrow(popu), size = nrow(popu)*.9)
     
   } else if(event == "Dominant Characteristic Pathogen") {
     dom.index <- which(popu$Trait=="Dominant")
-    deaths <- sample(dom.index, size = .8*length(dom.index))
+    deaths <- sample(dom.index, size = survival.rate*length(dom.index))
     
   } else if(event == "Recessive Characteristic Pathogen") {
     rec.index <- which(popu$Trait=="Recessive")
-    deaths <- sample(rec.index, size = .8*length(rec.index))
+    deaths <- sample(rec.index, size = survival.rate*length(rec.index))
     
+  } else if(event == "Natural Disaster") {
+    deaths <- sample(1:nrow(popu), size = survival.rate*nrow(popu))
+    
+  } else if(event == "Thanos Snap") {
+    deaths <- sample(1:nrow(popu), size = .5*nrow(popu))
   }
   
   affected <- popu[-deaths,]
@@ -129,15 +135,19 @@ get.proportions <- function(pop) {
 ```{r simulation}
 ## Sample simulation -- NOT DONE!!
 # Function to simulate the generations
-# Inputs: number of generations 'gens', default is 10, the starting allele frequency 'start.freq' ordered respective to 'AA', 'Aa', 'aa'. Also population size 'pop.size' and bottleneck event 'bottle'
+# Inputs: number of generations 'gens', default is 10, the starting allele frequency 'start.freq' ordered respective to 'AA', 'Aa', 'aa'. Also population size 'pop.size' and bottleneck event 'bottle' and survival rate for an event, specific to characteristic if either pathogen is chosen 'surv.rate'
 # Outputs: the resulting final generation of the simulation in a tibble
-simulate.generations <- function(gens=10, start.freq=c(.25, .5, .25), pop.size=100, bottle="Founder") {
+simulate.generations <- function(gens=10, start.freq=c(.25, .5, .25), pop.size=100, bottle="Founder", surv.rate = NA) {
   population <- create.generation(size = pop.size, allele.prop = start.freq)
-  population <- population %>% bottleneck(event = bottle)
+  population <- population %>% bottleneck(event = bottle, survival.rate = surv.rate)
   all.gens <- population %>% mutate(Gen = 1)
   for(gen in 2:gens) {
     props <- population %>% get.proportions()
-    population <- create.generation(size = nrow(population), alleles=props$Allele, allele.prop=props$prop)
+    if(nrow(population) < pop.size) {
+      population <- create.generation(size = (nrow(population)+0.5*pop.size), alleles=props$Allele, allele.prop=props$prop)
+    } else {
+       population <- create.generation(size = pop.size, alleles=props$Allele, allele.prop=props$prop)
+    }
     population <- population %>% mutate(Gen = gen)
     all.gens <- all.gens %>% rbind(population)
   }
@@ -152,10 +162,16 @@ simulate.generations <- function(gens=10, start.freq=c(.25, .5, .25), pop.size=1
 Founder.sim <- simulate.generations()
 
 # Simulation using Dominant Characteristic Pathogen
-dom.path.sim <- simulate.generations(bottle = "Dominant Characteristic Pathogen")
+dom.path.sim <- simulate.generations(bottle = "Dominant Characteristic Pathogen", surv.rate = 0.8)
 
 # Simulation using Recessive Characteristic Pathogen
-rec.path.sim <- simulate.generations(bottle = "Recessive Characteristic Pathogen")
+rec.path.sim <- simulate.generations(bottle = "Recessive Characteristic Pathogen", surv.rate = 0.8)
+
+# Simulation using Natural Disaster
+nat.disaster.sim <- simulate.generations(bottle = "Natural Disaster", surv.rate = 0.5)
+
+# Simulation using Thanos Snap
+than.snap.sim <- simulate.generations(bottle = "Thanos Snap")
 
 
 ```
