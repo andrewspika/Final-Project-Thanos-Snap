@@ -30,6 +30,14 @@ ui <- fluidPage(
                 min = 2,
                 max = 500
             ), 
+            numericInput(
+                inputId = "num_generations",
+                label = "Number of Generations",
+                value = 1,
+                step = 1,
+                min = 1,
+                max = 20
+            ),
             sliderInput(
                 inputId = "initial_frequency", 
                 label = "Initial Allele Frequency", 
@@ -87,6 +95,10 @@ ui <- fluidPage(
 server <- function(input, output) {
     output$population_size = renderText({
         input$population_size
+    })
+    
+    output$num_generations = renderText({
+        input$num_generations
     })
     
     output$initial_frequency = renderText({
