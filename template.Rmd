@@ -133,7 +133,7 @@ get.proportions <- function(pop) {
 ```
 
 ```{r simulation}
-## Sample simulation -- NOT DONE!!
+## Sample simulation
 # Function to simulate the generations
 # Inputs: number of generations 'gens', default is 10, the starting allele frequency 'start.freq' ordered respective to 'AA', 'Aa', 'aa'. Also population size 'pop.size' and bottleneck event 'bottle' and survival rate for an event, specific to characteristic if either pathogen is chosen 'surv.rate'
 # Outputs: the resulting final generation of the simulation in a tibble
