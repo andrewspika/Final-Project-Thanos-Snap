@@ -38,6 +38,12 @@ ui <- fluidPage(
                 min = 1,
                 max = 20
             ),
+            selectInput(
+                inputId = "allele",
+                label = "Allele to Manipulate",
+                choices = c("AA", "Aa", "aa"),
+                selected = "AA",
+            ),
             sliderInput(
                 inputId = "initial_frequency", 
                 label = "Initial Allele Frequency", 
@@ -81,10 +87,24 @@ server <- function(input, output, session) {
     observeEvent(input$run, {
         # Start simulation
       source("~/Desktop/Stat 345/Projects/345 Final Project Thanos Snap/FinalFunctions.R")
+        # Generating Starting Allele Frequencies
+      if(input$allele == "AA") {
+        AA.freq <- input$initial_frequency
+        Aa.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
+        aa.freq <- 1 - AA.freq - Aa.freq
+      } else if(input$allele == "Aa") {
+        Aa.freq <- input$initial_frequency
+        AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
+        aa.freq <- 1 - AA.freq - Aa.freq
+      } else {
+        aa.freq <- input$initial_frequency
+        AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
+        Aa.freq <- 1 - AA.freq - aa.freq
+      }
       
       population <- simulate.generations(
         gens = input$num_generations, 
-        start.freq = c(input$initial_frequency/2, input$initial_frequency/2, (1-input$initial_frequency)), 
+        start.freq = c(AA.freq, Aa.freq, aa.freq), 
         pop.size = input$population_size, 
         bottle = input$bottleneck, 
         surv.rate = input$mortality_rate)

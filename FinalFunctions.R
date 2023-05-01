@@ -1,3 +1,7 @@
+library(tidyverse)
+library(ggplot2)
+source("~/Desktop/Stat 345/LibraryCalls.R")
+
 # Function to create a generation of offspring, or initial population
 # Inputs: generation size 'size', alleles in genetic pool 'alleles', and allele proportion 'allele.prop'
 # Outputs: tibble with a generation of offspring

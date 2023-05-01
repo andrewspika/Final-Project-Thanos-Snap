@@ -176,6 +176,14 @@ than.snap.sim <- simulate.generations(bottle = "Thanos Snap")
 
 ```
 
+```{r}
+# Render Plots to Summarize Information
+population <- simulate.generations()
+
+population %>% ggplot(aes(Allele)) + geom_col(position = "dodge") + facet_wrap(vars(Gen))
+```
+
+
 ```{r summarizing}
 
 Founder.sim %>% group_by(Gen, Allele) %>% summarize(props = length(Allele)/nrow(Founder.sim)*10) %>% ggplot(aes(Gen, props)) + geom_col(aes(fill = Allele), position = "dodge")
@@ -183,6 +191,8 @@ Founder.sim %>% group_by(Gen, Allele) %>% summarize(props = length(Allele)/nrow(
 dom.path.sim %>% group_by(Gen, Allele) %>% summarize(props = length(Allele)/nrow(dom.path.sim)*10) %>% ggplot(aes(Gen, props)) + geom_col(aes(fill = Allele), position = "dodge")
 
 rec.path.sim %>% group_by(Gen, Allele) %>% summarize(props = length(Allele)/nrow(rec.path.sim)*10) %>% ggplot(aes(Gen, props)) + geom_col(aes(fill = Allele), position = "dodge")
+
+
 
 ```
 
