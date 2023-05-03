@@ -41,8 +41,8 @@ ui <- fluidPage(
             selectInput(
                 inputId = "allele",
                 label = "Allele to Manipulate",
-                choices = c("AA", "Aa", "aa"),
-                selected = "AA",
+                choices = c("A", "a"),
+                selected = "A",
             ),
             sliderInput(
                 inputId = "initial_frequency", 
@@ -84,27 +84,37 @@ ui <- fluidPage(
 # Define server logic ----
 server <- function(input, output, session) {
   
+  
+  
     observeEvent(input$run, {
         # Start simulation
       source("~/Desktop/Stat 345/Projects/345 Final Project Thanos Snap/FinalFunctions.R")
         # Generating Starting Allele Frequencies
-       if(input$allele == "AA") {
-         AA.freq <- input$initial_frequency
-         Aa.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
-         aa.freq <- 1 - AA.freq - Aa.freq
-        } else if(input$allele == "Aa") {
-         Aa.freq <- input$initial_frequency
-         AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
-         aa.freq <- 1 - AA.freq - Aa.freq
-        } else {
-         aa.freq <- input$initial_frequency
-         AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
-         Aa.freq <- 1 - AA.freq - aa.freq
-        }
-      
+ #      if(input$allele == "AA") {
+#         AA.freq <- input$initial_frequency
+ #        Aa.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
+  #       aa.freq <- 1 - AA.freq - Aa.freq
+   #     } else if(input$allele == "Aa") {
+    #     Aa.freq <- input$initial_frequency
+  #       AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
+   #      aa.freq <- 1 - AA.freq - Aa.freq
+  #      } else {
+   #      aa.freq <- input$initial_frequency
+  #       AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
+   #      Aa.freq <- 1 - AA.freq - aa.freq
+  #      }
+   
+    if(input$allele == "A") {
+      A.freq <- input$initial_frequency
+      a.freq <- 1 - A.freq
+    } else {
+      a.freq <- input$initial_frequency
+      A.freq <- 1 - a.freq
+    }
+         
       population <- simulate.generations(
         gens = input$num_generations, 
-        start.freq = c(AA.freq, Aa.freq, aa.freq), 
+        start.freq = c(A.freq^2, 2*A.freq*a.freq, a.freq^2), 
         pop.size = input$population_size, 
         bottle = input$bottleneck, 
         surv.rate = input$mortality_rate)
@@ -113,23 +123,28 @@ server <- function(input, output, session) {
       genSizes <- population %>% group_by(Gen) %>% summarize(n.Gen = length(Gen))
       plotsInfo <- plotsInfo %>% left_join(genSizes, by = "Gen") %>% mutate(proportions = n.Allele/n.Gen)
       
-      animation <- plotsInfo %>% 
-          ggplot(aes(Allele, proportions)) + 
-          geom_col(aes(fill = Allele)) + 
-          scale_fill_discrete(type = c("red", "purple", "blue")) + 
-          labs(x = "Alleles", y = "Proportion of Population", title = "Allele Proportions Gen: {frame_time}") +
-          transition_time(Gen)
+      scatter <- plotsInfo %>%
+        ggplot(aes(Gen, proportions, color = Allele)) + 
+        geom_point(aes(size = 3))
       
-    })
+#      animation <- plotsInfo %>% 
+ #         ggplot(aes(Allele, proportions)) + 
+  #        geom_col(aes(fill = Allele)) + 
+   #       scale_fill_discrete(type = c("red", "purple", "blue")) + 
+    #      labs(x = "Alleles", y = "Proportion of Population", title = "Allele Proportions Gen: {frame_time}") +
+    #      transition_time(Gen)
+      
       output$plots <- renderPlot({
-        animate(animation, fps = 1)
+     #   animate(animation)
+        scatter
       })
-      
+    })
     observeEvent(input$reset, {
         # Stop simulation and clear progress
       population <- NULL
       plotsInfo <- NULL
       genSizes <- NULL
+      animation <- NULL
       output$plots <- renderPlot({})
     })
 }
