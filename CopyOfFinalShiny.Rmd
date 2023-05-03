@@ -54,18 +54,18 @@ ui <- fluidPage(
                 value = 0.50
             ), 
             selectInput(
-              inputId = "bottleneck",
-              label = "Bottleneck Event",
-              choices = c("Thanos Snap", "Founder", "Dominant Characteristic Pathogen", "Recessive Characteristic Pathogen", "Natural Disaster"),
-              selected = "Thanos Snap"
+                inputId = "bottleneck",
+                label = "Bottleneck Event",
+                choices = c("Thanos Snap", "Founder", "Dominant Characteristic Pathogen", "Recessive Characteristic Pathogen", "Natural Disaster"),
+                selected = "Thanos Snap"
             ),
             sliderInput(
-              inputId = "mortality_rate",
-              label = "Mortality Rate for Natural Disasters and Pathogens",
-              min = 0.05,
-              max = 1,
-              step = 0.05,
-              value = 0.5,
+                inputId = "mortality_rate",
+                label = "Mortality Rate for Natural Disasters and Pathogens",
+                min = 0.05,
+                max = 1,
+                step = 0.05,
+                value = 0.5,
             ),
             actionButton(
                 inputId = "run", 
@@ -76,109 +76,112 @@ ui <- fluidPage(
             ),
         mainPanel(
             plotOutput(
-              outputId = "plots"
+                outputId = "plots"
             ),
             tableOutput(
-              outputId <- "table"
+                outputId <- "table"
             ),
             textOutput(
-              outputId = "bottle.description"
-            )
+                outputId = "bottle.description"
             )
         )
+    )
 )
 
 # Define server logic ----
 server <- function(input, output, session) {
-  library(tidyverse)
-  summary.table <- tibble(Genotype = c("AA", "Aa", "aa"))
+    library(tidyverse)
+    summary.table <- tibble(Genotype = c("AA", "Aa", "aa"))
   
     observeEvent(input$run, {
         # Start simulation
-      source("FinalFunctions.R")
-      
+        source("FinalFunctions.R")
+  
         # Generating Starting Allele Frequencies
-    if(input$allele == "A") {
-      A.freq <- input$initial_frequency
-      a.freq <- 1 - A.freq
-    } else {
-      a.freq <- input$initial_frequency
-      A.freq <- 1 - a.freq
-    }
-         # Running main simulation code
-      population <- simulate.generations(
+        if(input$allele == "A") {
+            A.freq <- input$initial_frequency
+            a.freq <- 1 - A.freq
+        } else {
+            a.freq <- input$initial_frequency
+            A.freq <- 1 - a.freq
+        }
+    
+        # Running main simulation code
+        population <- simulate.generations(
         gens = input$num_generations, 
         start.freq = c(A.freq^2, 2*A.freq*a.freq, a.freq^2), 
         pop.size = input$population_size, 
         bottle = input$bottleneck, 
         surv.rate = input$mortality_rate)
-      
+  
         # Cleaning up data for plots
-      plotsInfo <- population %>% group_by(Gen, Allele) %>% summarize(n.Allele = length(Allele))
-      genSizes <- population %>% group_by(Gen) %>% summarize(n.Gen = length(Gen))
-      plotsInfo <- plotsInfo %>% left_join(genSizes, by = "Gen") %>% mutate(proportions = n.Allele/n.Gen)
-      
+        plotsInfo <- population %>% group_by(Gen, Allele) %>% summarize(n.Allele = length(Allele))
+        genSizes <- population %>% group_by(Gen) %>% summarize(n.Gen = length(Gen))
+        plotsInfo <- plotsInfo %>% left_join(genSizes, by = "Gen") %>% mutate(proportions = n.Allele/n.Gen)
+        
         # Generated plots
-      scatter <- plotsInfo %>%
+        scatter <- plotsInfo %>%
         ggplot(aes(Gen, n.Allele)) + 
-        geom_point(aes(color = Allele, size = 3)) + 
+        geom_point(aes(color = Allele), size = 3) + 
         labs(x = "Generation", y = "Genotype Count", title = "Genetic Drift Simulation", color = "Genotype", size = "")
-      
-      
+  
+  
         # Modify summary table
-      prop.change <- plotsInfo %>% filter(Gen == 1 | Gen == input$num_generations) %>% 
+        prop.change <- plotsInfo %>% filter(Gen == 1 | Gen == input$num_generations) %>% 
         group_by(Allele) %>% 
         summarize("Proportion Change" = proportions[which(Gen == input$num_generations)] - proportions[which(Gen == 1)])
-      colnames(prop.change) <- c("Genotype", "Proportion Change")
-      summary.table <- summary.table %>% left_join(prop.change, by = "Genotype")
-      
+        colnames(prop.change) <- c("Genotype", "Proportion Change")
+        summary.table <- summary.table %>% left_join(prop.change, by = "Genotype")
+    
         # Output summary plot
-      output$plots <- renderPlot({
-        scatter
-      })
-      
+        output$plots <- renderPlot({
+            scatter
+        })
+  
         # Generate information to display about bottleneck event
-      ifelse(input$bottleneck == "Thanos Snap", 
-        description <- "Boom! Thanos snapped his fingers and half the population has been wiped out!",
-        ifelse(input$bottleneck == "Founder", 
-               description <- "One tenth of the population isolated itself and repopulated.",
-               ifelse(input$bottleneck == "Dominant Characteristic Pathogen",
-                      description <- "A Deadly Pathogen that only affects those with the dominant characteristic is introduced into the population! Only those with genotype AA or Aa affected.",
-                      ifelse(input$bottleneck == "Recessive Characteristic Pathogen",
-                             description <- "A Deadly Pathogen that only affects those with the recessive characteristic is introduced into the population! Only those with genotype aa affected.", 
-                              description <- "A Natural Disaster struck the area that the population resides and wiped out a portion of the population!"
-                            )
-                      )
+        ifelse(input$bottleneck == "Thanos Snap", 
+            description <- "Boom! Thanos snapped his fingers and half the population has been wiped out!",
+            ifelse(input$bottleneck == "Founder", 
+                description <- "One tenth of the population isolated itself and repopulated.",
+                ifelse(input$bottleneck == "Dominant Characteristic Pathogen",
+                    description <- "A Deadly Pathogen that only affects those with the dominant characteristic is introduced 
+                                    into the population! Only those with genotype AA or Aa affected.",
+                    ifelse(input$bottleneck == "Recessive Characteristic Pathogen",
+                        description <- "A Deadly Pathogen that only affects those with the recessive characteristic is introduced 
+                                        into the population! Only those with genotype aa affected.", 
+                        description <- "A Natural Disaster struck the area that the population resides and wiped out a portion of the population!"
+                    )
                 )
+            )
         )
 
         # Display bottleneck description
-      output$bottle.description <- renderText({
-        description
-      })
-        
-        # Output updated Table
-      output$table <- renderTable({
-      summary.table
-      })
-      
-    })
+        output$bottle.description <- renderText({
+            description
+        })
     
-      # Reset simulation
+        # Output updated Table
+        output$table <- renderTable({
+            summary.table
+        })
+
+    })
+
+    # Reset simulation
     observeEvent(input$reset, {
         # Stop simulation and clear progress
-      population <- NULL
-      plotsInfo <- NULL
-      genSizes <- NULL
-      animation <- NULL
-      output$plots <- renderPlot({})
-      output$bottle.description <- renderText({})
-      output$table <- renderTable({})
+        population <- NULL
+        plotsInfo <- NULL
+        genSizes <- NULL
+        animation <- NULL
+        output$plots <- renderPlot({})
+        output$bottle.description <- renderText({})
+        output$table <- renderTable({})
     })
-    
-      # Output summary table
+
+    # Output summary table
     output$table <- renderTable({
-      summary.table
+        summary.table
     })
 }
 
