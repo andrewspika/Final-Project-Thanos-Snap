@@ -113,16 +113,17 @@ server <- function(input, output, session) {
       genSizes <- population %>% group_by(Gen) %>% summarize(n.Gen = length(Gen))
       plotsInfo <- plotsInfo %>% left_join(genSizes, by = "Gen") %>% mutate(proportions = n.Allele/n.Gen)
       
-      output$plots <- renderPlot({
-        animation <- plotsInfo %>% 
+      animation <- plotsInfo %>% 
           ggplot(aes(Allele, proportions)) + 
           geom_col(aes(fill = Allele)) + 
           scale_fill_discrete(type = c("red", "purple", "blue")) + 
-          labs(x = "Allele", y = "Proportion in Population", title = "Allele Proportions Gen: {frame_time}") +
+          labs(x = "Alleles", y = "Proportion of Population", title = "Allele Proportions Gen: {frame_time}") +
           transition_time(Gen)
-        animate(animation, fps = 1)
-        })
+      
     })
+      output$plots <- renderPlot({
+        animate(animation, fps = 1)
+      })
       
     observeEvent(input$reset, {
         # Stop simulation and clear progress
