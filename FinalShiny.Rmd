@@ -20,13 +20,11 @@ library(ggplot2)
 # Shiny ideas from https://github.com/santiagosnchez/genetic_drift
 ui <- fluidPage(
     titlePanel("Genetic Drift Simulator"),
-    sidebarLayout(
-        sidebarPanel(
+        inputPanel(
             numericInput(
                 inputId = "population_size", 
                 label = "Population Size", 
                 value = 100, 
-                step = 1), 
                 step = 1, 
                 min = 2,
                 max = 500
@@ -39,23 +37,34 @@ ui <- fluidPage(
                 min = 1,
                 max = 20
             ),
-
             sliderInput(
                 inputId = "initial_frequency", 
                 label = "Initial Allele Frequency", 
                 min = 0, 
                 max = 1, 
                 step = 0.05, 
-                value = 0.50), 
+                value = 0.50
+            ), 
+            selectInput(
+              inputId = "bottleneck",
+              label = "Bottleneck Event",
+              choices = c("Thanos Snap", "Founder", "Dominant Characteristic Pathogen", "Recessive Characteristic Pathogen", "Natural Disaster"),
+              selected = "Thanos Snap"
+            ),
+            sliderInput(
+              inputId = "survival_rate",
+              label = "Survival Rate for Natural Disasters and Pathogens",
+              min = 0,
+              max = 1,
+              step = 0.05,
+              value = 0.5,
+            ),
             actionButton(
                 inputId = "run", 
                 label = "Run"), 
             actionButton(
                 inputId = "reset", 
                 label = "Reset"), 
-            actionButton(
-                inputId = "bottleneck", 
-                label = "Bottleneck!")
             ),
         mainPanel(
             fluidRow(
@@ -91,20 +100,18 @@ server <- function(input, output) {
     observeEvent(input$run, {
         # Start simulation
       source("~/Desktop/Stat 345/Projects/345 Final Project Thanos Snap/FinalFunctions.R")
-      simulate.generations(
+      population <- simulate.generations(
         gens = input$num_generations, 
-        start.freq = , 
+        start.freq = c(input$initial_frequency/2, input$initial_frequency/2, 1-input$initial_frequency), 
         pop.size = input$population_size, 
         bottle = input$bottleneck, 
-        surv.rate = )
+        surv.rate = input$survival_rate)
+      
+      population %>% group_by(Allele, Gen), summarize(Proportions = )
     })
     
     observeEvent(input$reset, {
         # Stop simulation and clear progress
-    })
-    
-    observeEvent(input$bottleneck, {
-        # Use bottleneck function we create.
     })
 }
 
