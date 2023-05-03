@@ -95,7 +95,7 @@ server <- function(input, output, session) {
   
     observeEvent(input$run, {
         # Start simulation
-      source("~/Desktop/Stat 345/Projects/345 Final Project Thanos Snap/FinalFunctions.R")
+      source("FinalFunctions.R")
       
         # Generating Starting Allele Frequencies
     if(input$allele == "A") {
