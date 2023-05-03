@@ -77,6 +77,9 @@ ui <- fluidPage(
             plotOutput(
               outputId = "plots"
             )
+            tableOutput(
+              outputId <- "table"
+            )
             )
         )
 )
@@ -88,7 +91,7 @@ server <- function(input, output, session) {
   
     observeEvent(input$run, {
         # Start simulation
-      source("FinalFunctions.R")
+      source("~/Desktop/Stat 345/Projects/345 Final Project Thanos Snap/FinalFunctions.R")
         # Generating Starting Allele Frequencies
  #      if(input$allele == "AA") {
 #         AA.freq <- input$initial_frequency
@@ -147,6 +150,7 @@ server <- function(input, output, session) {
       animation <- NULL
       output$plots <- renderPlot({})
     })
+    
 }
 
 # Run the app ----
