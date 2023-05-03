@@ -9,7 +9,8 @@ runtime: shiny
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Framework
+# Genetic Drift Simulation
+Simulation to show Genetic Drift over a span of multiple generation. A population bottleneck occurs halfway through the total number of generations in the simulation. 
 
 ```{r echo=FALSE}
 library(shiny)
@@ -79,6 +80,9 @@ ui <- fluidPage(
             ),
             tableOutput(
               outputId <- "table"
+            ),
+            textOutput(
+              outputId = "bottle.description"
             )
             )
         )
@@ -127,12 +131,21 @@ server <- function(input, output, session) {
       plotsInfo <- plotsInfo %>% left_join(genSizes, by = "Gen") %>% mutate(proportions = n.Allele/n.Gen)
       
       scatter <- plotsInfo %>%
-        ggplot(aes(Gen, proportions, color = Allele)) + 
+        ggplot(aes(Gen, n.Allele, color = Allele)) + 
         geom_point(aes(size = 3))
       
       output$plots <- renderPlot({
         scatter
       })
+      
+      if(input$bottleneck == "Thanos Snap") {
+        description <- "Boom! Thanos snapped his fingers and half the population has been wiped out!"
+      }
+      output$bottleneck.description <- renderText({
+        description
+      })
+        
+
     })
     observeEvent(input$reset, {
         # Stop simulation and clear progress

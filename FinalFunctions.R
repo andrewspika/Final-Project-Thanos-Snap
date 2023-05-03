@@ -88,7 +88,7 @@ simulate.generations <- function(gens=10, start.freq=c(.25, .5, .25), pop.size=1
     } else {
     
      if(nrow(population) < pop.size) {
-       population <- create.generation(size = (nrow(population)+0.5*pop.size), alleles=props$Allele, allele.prop=props$prop)
+       population <- create.generation(size = (nrow(population)+0.10*pop.size), alleles=props$Allele, allele.prop=props$prop)
      } else {
        population <- create.generation(size = pop.size, alleles=props$Allele, allele.prop=props$prop)
      }
