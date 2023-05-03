@@ -88,19 +88,19 @@ server <- function(input, output, session) {
         # Start simulation
       source("~/Desktop/Stat 345/Projects/345 Final Project Thanos Snap/FinalFunctions.R")
         # Generating Starting Allele Frequencies
-      if(input$allele == "AA") {
-        AA.freq <- input$initial_frequency
-        Aa.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
-        aa.freq <- 1 - AA.freq - Aa.freq
-      } else if(input$allele == "Aa") {
-        Aa.freq <- input$initial_frequency
-        AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
-        aa.freq <- 1 - AA.freq - Aa.freq
-      } else {
-        aa.freq <- input$initial_frequency
-        AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
-        Aa.freq <- 1 - AA.freq - aa.freq
-      }
+       if(input$allele == "AA") {
+         AA.freq <- input$initial_frequency
+         Aa.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
+         aa.freq <- 1 - AA.freq - Aa.freq
+        } else if(input$allele == "Aa") {
+         Aa.freq <- input$initial_frequency
+         AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
+         aa.freq <- 1 - AA.freq - Aa.freq
+        } else {
+         aa.freq <- input$initial_frequency
+         AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
+         Aa.freq <- 1 - AA.freq - aa.freq
+        }
       
       population <- simulate.generations(
         gens = input$num_generations, 
@@ -113,13 +113,17 @@ server <- function(input, output, session) {
       genSizes <- population %>% group_by(Gen) %>% summarize(n.Gen = length(Gen))
       plotsInfo <- plotsInfo %>% left_join(genSizes, by = "Gen") %>% mutate(proportions = n.Allele/n.Gen)
       
-      output$plots <- renderPlot({plotsInfo %>% 
+      output$plots <- renderPlot({
+        animation <- plotsInfo %>% 
           ggplot(aes(Allele, proportions)) + 
           geom_col(aes(fill = Allele)) + 
-          facet_wrap(vars(Gen))})
-      
+          scale_fill_discrete(type = c("red", "purple", "blue")) + 
+          labs(x = "Allele", y = "Proportion in Population", title = "Allele Proportions Gen: {frame_time}") +
+          transition_time(Gen)
+        animate(animation, fps = 1)
+        })
     })
-    
+      
     observeEvent(input$reset, {
         # Stop simulation and clear progress
       population <- NULL
