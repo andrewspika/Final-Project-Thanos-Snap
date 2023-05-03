@@ -29,7 +29,7 @@ ui <- fluidPage(
                 value = 100, 
                 step = 1, 
                 min = 2,
-                max = 500
+                max = 1000
             ), 
             numericInput(
                 inputId = "num_generations",
@@ -37,7 +37,7 @@ ui <- fluidPage(
                 value = 10,
                 step = 1,
                 min = 1,
-                max = 20
+                max = 50
             ),
             selectInput(
                 inputId = "allele",
@@ -91,26 +91,13 @@ ui <- fluidPage(
 # Define server logic ----
 server <- function(input, output, session) {
   library(tidyverse)
-  summary.table <- tibble()
+  summary.table <- tibble(Genotype = c("AA", "Aa", "aa"))
   
     observeEvent(input$run, {
         # Start simulation
       source("~/Desktop/Stat 345/Projects/345 Final Project Thanos Snap/FinalFunctions.R")
+      
         # Generating Starting Allele Frequencies
- #      if(input$allele == "AA") {
-#         AA.freq <- input$initial_frequency
- #        Aa.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
-  #       aa.freq <- 1 - AA.freq - Aa.freq
-   #     } else if(input$allele == "Aa") {
-    #     Aa.freq <- input$initial_frequency
-  #       AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
-   #      aa.freq <- 1 - AA.freq - Aa.freq
-  #      } else {
-   #      aa.freq <- input$initial_frequency
-  #       AA.freq <- sample(0:((1-input$initial_frequency)*100), size = 1)/100
-   #      Aa.freq <- 1 - AA.freq - aa.freq
-  #      }
-   
     if(input$allele == "A") {
       A.freq <- input$initial_frequency
       a.freq <- 1 - A.freq
@@ -118,7 +105,7 @@ server <- function(input, output, session) {
       a.freq <- input$initial_frequency
       A.freq <- 1 - a.freq
     }
-         
+         # Running main simulation code
       population <- simulate.generations(
         gens = input$num_generations, 
         start.freq = c(A.freq^2, 2*A.freq*a.freq, a.freq^2), 
@@ -126,27 +113,58 @@ server <- function(input, output, session) {
         bottle = input$bottleneck, 
         surv.rate = input$mortality_rate)
       
+        # Cleaning up data for plots
       plotsInfo <- population %>% group_by(Gen, Allele) %>% summarize(n.Allele = length(Allele))
       genSizes <- population %>% group_by(Gen) %>% summarize(n.Gen = length(Gen))
       plotsInfo <- plotsInfo %>% left_join(genSizes, by = "Gen") %>% mutate(proportions = n.Allele/n.Gen)
       
+        # Generated plots
       scatter <- plotsInfo %>%
-        ggplot(aes(Gen, n.Allele, color = Allele)) + 
-        geom_point(aes(size = 3))
+        ggplot(aes(Gen, n.Allele)) + 
+        geom_point(aes(color = Allele, size = 3)) + 
+        labs(x = "Generation", y = "Genotype Count", title = "Genetic Drift Simulation", color = "Genotype", size = "")
       
+      
+        # Modify summary table
+      prop.change <- plotsInfo %>% filter(Gen == 1 | Gen == input$num_generations) %>% 
+        group_by(Allele) %>% 
+        summarize("Proportion Change" = proportions[which(Gen == input$num_generations)] - proportions[which(Gen == 1)])
+      colnames(prop.change) <- c("Genotype", "Proportion Change")
+      summary.table <- summary.table %>% left_join(prop.change, by = "Genotype")
+      
+        # Output summary plot
       output$plots <- renderPlot({
         scatter
       })
       
-      if(input$bottleneck == "Thanos Snap") {
-        description <- "Boom! Thanos snapped his fingers and half the population has been wiped out!"
-      }
-      output$bottleneck.description <- renderText({
+        # Generate information to display about bottleneck event
+      ifelse(input$bottleneck == "Thanos Snap", 
+        description <- "Boom! Thanos snapped his fingers and half the population has been wiped out!",
+        ifelse(input$bottleneck == "Founder", 
+               description <- "One tenth of the population isolated itself and repopulated.",
+               ifelse(input$bottleneck == "Dominant Characteristic Pathogen",
+                      description <- "A Deadly Pathogen that only affects those with the dominant characteristic is introduced into the population! Only those with genotype AA or Aa affected.",
+                      ifelse(input$bottleneck == "Recessive Characteristic Pathogen",
+                             description <- "A Deadly Pathogen that only affects those with the recessive characteristic is introduced into the population! Only those with genotype aa affected.", 
+                              description <- "A Natural Disaster struck the area that the population resides and wiped out a portion of the population!"
+                            )
+                      )
+                )
+        )
+
+        # Display bottleneck description
+      output$bottle.description <- renderText({
         description
       })
         
-
+        # Output updated Table
+      output$table <- renderTable({
+      summary.table
+      })
+      
     })
+    
+      # Reset simulation
     observeEvent(input$reset, {
         # Stop simulation and clear progress
       population <- NULL
@@ -154,8 +172,11 @@ server <- function(input, output, session) {
       genSizes <- NULL
       animation <- NULL
       output$plots <- renderPlot({})
+      output$bottle.description <- renderText({})
+      output$table <- renderTable({})
     })
     
+      # Output summary table
     output$table <- renderTable({
       summary.table
     })
