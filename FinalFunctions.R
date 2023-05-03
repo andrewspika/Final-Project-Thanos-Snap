@@ -76,14 +76,22 @@ get.proportions <- function(pop) {
 # Outputs: the resulting final generation of the simulation in a tibble
 simulate.generations <- function(gens=10, start.freq=c(.25, .5, .25), pop.size=100, bottle="Founder", surv.rate = NA) {
   population <- create.generation(size = pop.size, allele.prop = start.freq)
-  population <- population %>% bottleneck(event = bottle, survival.rate = surv.rate)
+ # population <- population %>% bottleneck(event = bottle, survival.rate = surv.rate)
   all.gens <- population %>% mutate(Gen = 1)
   for(gen in 2:gens) {
     props <- population %>% get.proportions()
-    if(nrow(population) < pop.size) {
-      population <- create.generation(size = (nrow(population)+0.5*pop.size), alleles=props$Allele, allele.prop=props$prop)
+   
+    # Alteration
+     if(gen == gens/2) {
+      population <- create.generation(size = pop.size, alleles=props$Allele, allele.prop=props$prop) %>% 
+        bottleneck(event = bottle, survival.rate = surv.rate)
     } else {
-      population <- create.generation(size = pop.size, alleles=props$Allele, allele.prop=props$prop)
+    
+     if(nrow(population) < pop.size) {
+       population <- create.generation(size = (nrow(population)+0.5*pop.size), alleles=props$Allele, allele.prop=props$prop)
+     } else {
+       population <- create.generation(size = pop.size, alleles=props$Allele, allele.prop=props$prop)
+     }
     }
     population <- population %>% mutate(Gen = gen)
     all.gens <- all.gens %>% rbind(population)

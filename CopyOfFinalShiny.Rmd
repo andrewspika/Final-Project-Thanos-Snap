@@ -33,7 +33,7 @@ ui <- fluidPage(
             numericInput(
                 inputId = "num_generations",
                 label = "Number of Generations",
-                value = 1,
+                value = 10,
                 step = 1,
                 min = 1,
                 max = 20
@@ -76,7 +76,7 @@ ui <- fluidPage(
         mainPanel(
             plotOutput(
               outputId = "plots"
-            )
+            ),
             tableOutput(
               outputId <- "table"
             )
@@ -86,8 +86,8 @@ ui <- fluidPage(
 
 # Define server logic ----
 server <- function(input, output, session) {
-  
-  
+  library(tidyverse)
+  summary.table <- tibble()
   
     observeEvent(input$run, {
         # Start simulation
@@ -130,15 +130,7 @@ server <- function(input, output, session) {
         ggplot(aes(Gen, proportions, color = Allele)) + 
         geom_point(aes(size = 3))
       
-#      animation <- plotsInfo %>% 
- #         ggplot(aes(Allele, proportions)) + 
-  #        geom_col(aes(fill = Allele)) + 
-   #       scale_fill_discrete(type = c("red", "purple", "blue")) + 
-    #      labs(x = "Alleles", y = "Proportion of Population", title = "Allele Proportions Gen: {frame_time}") +
-    #      transition_time(Gen)
-      
       output$plots <- renderPlot({
-     #   animate(animation)
         scatter
       })
     })
@@ -151,6 +143,9 @@ server <- function(input, output, session) {
       output$plots <- renderPlot({})
     })
     
+    output$table <- renderTable({
+      summary.table
+    })
 }
 
 # Run the app ----
