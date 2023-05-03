@@ -214,4 +214,6 @@ run.bottleneck = function(prop.lost=0.50){ # Eventually will be controlled by a 
     
     # Somehow continue simulation (maybe a resume button?)
 }
+
+test_plot = plot(c(1,2,3,4,5), c(5,4,3,2,1))
 ```
