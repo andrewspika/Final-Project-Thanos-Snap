@@ -1,6 +1,20 @@
 library(tidyverse)
 library(ggplot2)
-source("~/Desktop/Stat 345/LibraryCalls.R")
+library(tidyverse)
+library(dslabs)
+library(gridExtra)
+library(ggrepel)
+library(ggthemes)
+library(knitr)
+library(viridis)
+library(stringr)
+library(rvest)
+library(hexbin)
+library(ggplot2)
+library(gganimate)
+library(gifski)
+library(png)
+library(ggforce)
 
 # Function to create a generation of offspring, or initial population
 # Inputs: generation size 'size', alleles in genetic pool 'alleles', and allele proportion 'allele.prop'
