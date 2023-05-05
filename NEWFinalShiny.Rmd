@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 # Genetic Drift Simulation
-Simulation to show Genetic Drift over a span of multiple generation. A population bottleneck occurs halfway through the total number of generations in the simulation. Change in proportions of each Genotype from the beginning of the simulation to the end of the simulation is shown in the table below the plot.
+Simulation to show Genetic Drift over a span of multiple generation. A population bottleneck occurs halfway through the total number of generations in the simulation. Change in proportions of each Genotype from the beginning of the simulation to the end of the simulation is shown in the table below the plot. NOTE: Mortality rate only applies to the 'Pathogen' Events and 'Natural Disaster' Event.
 
 ```{r echo=FALSE}
 library(shiny)
