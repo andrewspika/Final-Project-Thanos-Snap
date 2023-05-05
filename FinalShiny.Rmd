@@ -1,0 +1,198 @@
+---
+title: "Thanos Shiny"
+output: html_document
+date: "2023-04-07"
+names: "Andrew S, Lucas S, Dillon K, Noah C"
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Genetic Drift Simulation
+Simulation to show Genetic Drift over a span of multiple generation. A population bottleneck occurs halfway through the total number of generations in the simulation. Change in proportions of each Genotype from the beginning of the simulation to the end of the simulation is shown in the table below the plot. NOTE: Mortality rate only applies to the 'Pathogen' Events and 'Natural Disaster' Event.
+
+```{r echo=FALSE}
+library(shiny)
+library(ggplot2)
+
+# Define UI ----
+
+# Shiny ideas from https://github.com/santiagosnchez/genetic_drift
+ui <- fluidPage(
+    titlePanel("Genetic Drift Simulator"),
+    sidebarLayout(
+        sidebarPanel(
+            numericInput(
+                inputId = "population_size", 
+                label = "Population Size", 
+                value = 100, 
+                step = 1, 
+                min = 2,
+                max = 1000
+            ), 
+            numericInput(
+                inputId = "num_generations",
+                label = "Number of Generations",
+                value = 10,
+                step = 1,
+                min = 1,
+                max = 50
+            ),
+            selectInput(
+                inputId = "allele",
+                label = "Allele to Manipulate",
+                choices = c("A", "a"),
+                selected = "A",
+            ),
+            sliderInput(
+                inputId = "initial_frequency", 
+                label = "Initial Allele Frequency", 
+                min = 0, 
+                max = 1, 
+                step = 0.05, 
+                value = 0.50
+            ), 
+            selectInput(
+                inputId = "bottleneck",
+                label = "Bottleneck Event",
+                choices = c("Thanos Snap", "Founder", "Dominant Characteristic Pathogen", "Recessive Characteristic Pathogen", "Natural Disaster"),
+                selected = "Thanos Snap"
+            ),
+            sliderInput(
+                inputId = "mortality_rate",
+                label = "Mortality Rate for Natural Disasters and Pathogens",
+                min = 0.05,
+                max = 1,
+                step = 0.05,
+                value = 0.5,
+            ),
+            actionButton(
+                inputId = "run", 
+                label = "Run"), 
+            actionButton(
+                inputId = "reset", 
+                label = "Reset"), 
+            ),
+        mainPanel(
+            plotOutput(
+                outputId = "plots"
+            ),
+            tableOutput(
+                outputId <- "table"
+            ),
+            textOutput(
+                outputId = "bottle.description"
+            )
+        )
+    )
+)
+
+# Define server logic ----
+server <- function(input, output, session) {
+    library(tidyverse)
+    summary.table <- tibble(Genotype = c("AA", "Aa", "aa"))
+  
+    observeEvent(input$run, {
+        # Start simulation
+        source("FinalFunctions.R")
+  
+        # Generating Starting Allele Frequencies
+        if(input$allele == "A") {
+            A.freq <- input$initial_frequency
+            a.freq <- 1 - A.freq
+        } else {
+            a.freq <- input$initial_frequency
+            A.freq <- 1 - a.freq
+        }
+    
+        # Running main simulation code
+        population <- simulate.generations(
+        gens = input$num_generations, 
+        start.freq = c(A.freq^2, 2*A.freq*a.freq, a.freq^2), 
+        pop.size = input$population_size, 
+        bottle = input$bottleneck, 
+        surv.rate = input$mortality_rate)
+  
+        # Cleaning up data for plots
+        plotsInfo <- population %>% group_by(Gen, Allele) %>% summarize(n.Allele = length(Allele))
+        genSizes <- population %>% group_by(Gen) %>% summarize(n.Gen = length(Gen))
+        plotsInfo <- plotsInfo %>% left_join(genSizes, by = "Gen") %>% mutate(proportions = n.Allele/n.Gen)
+        
+        # Generated plots
+        scatter <- plotsInfo %>%
+        ggplot(aes(Gen, n.Allele)) + 
+        geom_point(aes(color = Allele), size = 3) + 
+        labs(x = "Generation", y = "Genotype Count", title = "Genetic Drift Simulation", color = "Genotype", size = "")
+  
+  
+        # Modify summary table
+        prop.change <- plotsInfo %>% filter(Gen == 1 | Gen == input$num_generations) %>% 
+        group_by(Allele) %>% 
+        summarize("Proportion Change" = proportions[which(Gen == input$num_generations)] - proportions[which(Gen == 1)])
+        colnames(prop.change) <- c("Genotype", "Proportion Change")
+        summary.table <- summary.table %>% left_join(prop.change, by = "Genotype")
+    
+        # Output summary plot
+        output$plots <- renderPlot({
+            scatter
+        })
+  
+        # Generate information to display about bottleneck event
+        ifelse(input$bottleneck == "Thanos Snap", 
+            description <- "Boom! Thanos snapped his fingers and half the population has been wiped out!",
+            ifelse(input$bottleneck == "Founder", 
+                description <- "One tenth of the population isolated itself and repopulated.",
+                ifelse(input$bottleneck == "Dominant Characteristic Pathogen",
+                    description <- "A Deadly Pathogen that only affects those with the dominant characteristic is introduced 
+                                    into the population! Only those with genotype AA or Aa affected.",
+                    ifelse(input$bottleneck == "Recessive Characteristic Pathogen",
+                        description <- "A Deadly Pathogen that only affects those with the recessive characteristic is introduced 
+                                        into the population! Only those with genotype aa affected.", 
+                        description <- "A Natural Disaster struck the area that the population resides and wiped out a portion of the population!"
+                    )
+                )
+            )
+        )
+
+        # Display bottleneck description
+        output$bottle.description <- renderText({
+            description
+        })
+    
+        # Output updated Table
+        output$table <- renderTable({
+            summary.table
+        })
+
+    })
+
+    # Reset simulation
+    observeEvent(input$reset, {
+        # Stop simulation and clear progress
+        population <- NULL
+        plotsInfo <- NULL
+        genSizes <- NULL
+        animation <- NULL
+        output$plots <- renderPlot({})
+        output$bottle.description <- renderText({})
+        output$table <- renderTable({})
+    })
+
+    # Output summary table
+    output$table <- renderTable({
+        summary.table
+    })
+}
+
+# Run the app ----
+shinyApp(ui = ui, server = server)
+
+
+
+```
+
+
+
+
